@@ -19,8 +19,8 @@ export function Users(app) {
     // =========================== GET =========================== //
 
     app.get(
-        "/api/users/getUserData",
-        controller.users.getUserData
+        "/api/users/getUserDataByUID",
+        controller.users.getUserDataByUID
     );
 
     app.get(

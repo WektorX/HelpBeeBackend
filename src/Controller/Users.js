@@ -3,9 +3,9 @@ import fs from 'firebase-admin';
 
 const Firestore = fs.firestore();
 
-async function getUserData(req, res){
+async function getUserDataByUID(req, res){
     const uid = req.query.uid;
-    const userData = await db.users.getUserData(uid);
+    const userData = await db.users.getUserDataByUID(uid);
     res.status(200).send({data : userData})
 }
 
@@ -33,7 +33,7 @@ async function checkIfUserFilledBasicData(req, res){
 }
 
 export const Users = {
-    getUserData: getUserData,
+    getUserDataByUID: getUserDataByUID,
     fillInUserData: fillInUserData,
     checkIfUserFilledBasicData: checkIfUserFilledBasicData
     

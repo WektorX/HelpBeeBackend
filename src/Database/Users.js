@@ -1,18 +1,14 @@
 import { common } from "./Common.js";
-
+import fs from 'firebase-admin';
 const collectionName = 'users';
 
-async function getUserData(uid) {
+async function getUserDataByUID(uid) {
     try {
-        let response = [];
+       
         const collection = common.db.collection(collectionName);
-        const query = await collection.where('userID', '==', uid)
-            .get()
-            .then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    response.push(doc.data())
-                })
-            })
+        const query = await collection.doc(uid).get();
+        const response = query.data();
+        response.birthDate = new fs.firestore.Timestamp(response.birthDate._seconds, response.birthDate._nanoseconds).toDate();
         return response;
     }
     catch (e) {
@@ -59,7 +55,7 @@ async function checkIfUserFilledBasicData(id) {
 
 
 export const Users = {
-    getUserData: getUserData,
+    getUserDataByUID: getUserDataByUID,
     fillInUserData: fillInUserData,
     checkIfUserFilledBasicData: checkIfUserFilledBasicData
 }
