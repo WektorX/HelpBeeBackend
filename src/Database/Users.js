@@ -30,8 +30,21 @@ async function fillInUserData(id, user) {
     }
 }
 
+async function setUserLocation(id, location){
+    try {
+        var result;
+        const collection = common.db.collection(collectionName);
+        result = await collection.doc(id).update({"location" : location});
+        return result;
+
+    } catch (error) {
+        console.log(error)
+        return error
+    } 
+}
+
+
 async function checkIfUserFilledBasicData(id) {
-    console.log(id)
     try {
         var result = {
             message: "User did not filled in!",
@@ -57,5 +70,6 @@ async function checkIfUserFilledBasicData(id) {
 export const Users = {
     getUserDataByUID: getUserDataByUID,
     fillInUserData: fillInUserData,
-    checkIfUserFilledBasicData: checkIfUserFilledBasicData
+    checkIfUserFilledBasicData: checkIfUserFilledBasicData,
+    setUserLocation : setUserLocation
 }

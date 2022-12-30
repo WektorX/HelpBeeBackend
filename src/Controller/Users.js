@@ -1,7 +1,7 @@
 import {db} from '../Database/DB.js';
 import fs from 'firebase-admin';
 
-const Firestore = fs.firestore();
+const Firestore = fs.firestore;
 
 async function getUserDataByUID(req, res){
     const uid = req.query.uid;
@@ -10,7 +10,7 @@ async function getUserDataByUID(req, res){
 }
 
 async function fillInUserData(req, res){
-    console.log(req.body);
+    console.log(req.body)
     let dateParts = req.body.birthDate.split(".");
     const id = req.body.uid;
     const user = {
@@ -20,7 +20,7 @@ async function fillInUserData(req, res){
         phoneNumber: req.body.phoneNumber,
         addressID: "",
         description: "",
-        location : [0,0], // TODO: set geopoint not an array
+        location : new Firestore.GeoPoint(0,0),
     };
     const result = await db.users.fillInUserData(id, user)
     res.status(200).send({message: result})
@@ -32,9 +32,18 @@ async function checkIfUserFilledBasicData(req, res){
     res.status(200).send(result);
 }
 
+async function setUserLocation(req, res){
+    console.log(req.body)
+    var location = new Firestore.GeoPoint(req.body.location.Latitude, req.body.location.Longitude);
+    const id = req.body.uid;
+    const result = await db.users.setUserLocation(id, location)
+    res.status(200).send({message: result})
+}
+
 export const Users = {
     getUserDataByUID: getUserDataByUID,
     fillInUserData: fillInUserData,
-    checkIfUserFilledBasicData: checkIfUserFilledBasicData
+    checkIfUserFilledBasicData: checkIfUserFilledBasicData,
+    setUserLocation : setUserLocation
     
 }

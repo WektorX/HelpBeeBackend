@@ -16,6 +16,8 @@ export function Users(app) {
 
     app.post('/api/users/fillInUserData', controller.users.fillInUserData);
 
+    app.post('/api/users/setUserLocation', controller.users.setUserLocation)
+
     // =========================== GET =========================== //
 
     app.get(
