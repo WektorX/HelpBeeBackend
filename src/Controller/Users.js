@@ -14,7 +14,7 @@ async function fillInUserData(req, res){
     let dateParts = req.body.birthDate.split(".");
     const id = req.body.uid;
     const user = {
-        birthDate: new Date(dateParts[2], dateParts[1], dateParts[0]),
+        birthDate: new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0],1,0,0),
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         phoneNumber: req.body.phoneNumber,
@@ -33,7 +33,6 @@ async function checkIfUserFilledBasicData(req, res){
 }
 
 async function setUserLocation(req, res){
-    console.log(req.body)
     var location = new Firestore.GeoPoint(req.body.location.Latitude, req.body.location.Longitude);
     const id = req.body.uid;
     const result = await db.users.setUserLocation(id, location)

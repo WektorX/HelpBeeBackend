@@ -1,6 +1,6 @@
 import { controller } from '../Controller/Controller.js';
 
-export function Orders(app){
+export function Offers(app){
     
 
 
@@ -21,13 +21,21 @@ export function Orders(app){
     // =========================== GET =========================== //
 
     app.get(
-        "/api/orders/getUserOrders",
-        controller.orders.getUserOrders
+        "/api/offers/getUserOffers",
+        controller.offers.getUserOffers
+    );
+
+    app.get(
+        "/api/offers/getOfferssFromCategory",
+        controller.offers.getOfferssFromCategory
     );
 
     // =========================== PUT =========================== //
 
-
+    app.post(
+        "/api/offers/insertOffer",
+        controller.offers.insertOffer
+    );
 
     // =========================== DELETE =========================== //
 

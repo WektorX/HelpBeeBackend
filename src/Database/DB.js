@@ -1,9 +1,9 @@
 import {Users} from './Users.js';
 import {Authentication} from './Authentication.js'
-import { Orders } from './Orders.js';
+import { Offers } from './Offers.js';
 
 export const db = {
     users: Users,
     authentication: Authentication,
-    orders: Orders
+    offers: Offers
 }
