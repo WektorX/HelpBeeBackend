@@ -12,6 +12,7 @@ async function getUserOffers(uid){
             querySnapshot.forEach((doc) =>{
                 let temp = doc.data();
                 temp.serviceDate = new fs.firestore.Timestamp(temp.serviceDate._seconds, temp.serviceDate._nanoseconds).toDate();
+                temp.id = doc.id;
                 response.push(temp)
             })
         })
@@ -33,7 +34,6 @@ async function getOfferssFromCategory(category){
                 response.push(doc.data())
             })
         })
-        console.log(response)
         return response;
     }
     catch(e){
@@ -55,8 +55,54 @@ async function insertOffer(offer){
     }
 }
 
+async function deleteOffer(id){
+    try {
+        var result;
+        const collection = common.db.collection(collectionName);
+        result = await collection.doc(id).delete();
+        return result;
+
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+
+async function withdrawOffer(id){
+    try {
+        var result;
+        const collection = common.db.collection(collectionName);
+        result = await collection.doc(id).update({status : 2});
+        return result;
+
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+async function updateOffer(id, offer){
+    console.log(id, offer)
+    try {
+        var result;
+        const collection = common.db.collection(collectionName);
+        result = await collection.doc(id).update(offer);
+        return result;
+
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+
+
 export const Offers = {
     getUserOffers: getUserOffers,
     getOfferssFromCategory : getOfferssFromCategory,
-    insertOffer: insertOffer
+    insertOffer: insertOffer,
+    deleteOffer: deleteOffer,
+    withdrawOffer: withdrawOffer,
+    updateOffer: updateOffer
 }

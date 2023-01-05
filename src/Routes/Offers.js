@@ -16,6 +16,20 @@ export function Offers(app){
 
     // =========================== POST =========================== //
 
+    app.post(
+        "/api/offers/insertOffer",
+        controller.offers.insertOffer
+    );
+
+    app.post(
+        "/api/offers/withdrawOffer",
+        controller.offers.withdrawOffer
+    );
+
+    app.post(
+        "/api/offers/updateOffer",
+        controller.offers.updateOffer
+    );
 
 
     // =========================== GET =========================== //
@@ -32,13 +46,15 @@ export function Offers(app){
 
     // =========================== PUT =========================== //
 
-    app.post(
-        "/api/offers/insertOffer",
-        controller.offers.insertOffer
-    );
+
 
     // =========================== DELETE =========================== //
 
+    app.delete(
+        "/api/offers/deleteOffer",
+        controller.offers.deleteOffer
+    );
 
+    
 
 }
