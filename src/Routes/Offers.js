@@ -30,8 +30,27 @@ export function Offers(app){
         "/api/offers/updateOffer",
         controller.offers.updateOffer
     );
+    
+    
+    app.post(
+        "/api/offers/takeOffer",
+        controller.offers.takeOffer
+    );
 
+    app.post(
+        "/api/offers/resignFromOffer",
+        controller.offers.resignFromOffer
+    );
 
+    app.post(
+        "/api/offers/acceptWorker",
+        controller.offers.acceptWorker
+    );
+
+    app.post(
+        "/api/offers/rejectWorker",
+        controller.offers.rejectWorker
+    );
     // =========================== GET =========================== //
 
     app.get(
@@ -40,8 +59,8 @@ export function Offers(app){
     );
 
     app.get(
-        "/api/offers/getOfferssFromCategory",
-        controller.offers.getOfferssFromCategory
+        "/api/offers/getOffersByCategory",
+        controller.offers.getOffersByCategory
     );
 
     // =========================== PUT =========================== //

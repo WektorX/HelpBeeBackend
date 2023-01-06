@@ -30,6 +30,12 @@ export function Users(app) {
         controller.users.checkIfUserFilledBasicData
     )
 
+    app.get(
+        "/api/users/getUserContactInfo",
+        controller.users.getUserContactInfo
+    )
+
+
     // =========================== PUT =========================== //
 
 

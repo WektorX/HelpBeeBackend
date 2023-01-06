@@ -9,6 +9,12 @@ async function getUserDataByUID(req, res){
     res.status(200).send({data : userData})
 }
 
+async function getUserContactInfo(req, res){
+    const uid = req.query.uid;
+    const userData = await db.users.getUserContactInfo(uid);
+    res.status(200).send(userData)
+}
+
 async function fillInUserData(req, res){
     console.log(req.body)
     let dateParts = req.body.birthDate.split(".");
@@ -43,6 +49,7 @@ export const Users = {
     getUserDataByUID: getUserDataByUID,
     fillInUserData: fillInUserData,
     checkIfUserFilledBasicData: checkIfUserFilledBasicData,
-    setUserLocation : setUserLocation
+    setUserLocation : setUserLocation,
+    getUserContactInfo:getUserContactInfo
     
 }

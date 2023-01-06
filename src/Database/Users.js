@@ -14,8 +14,25 @@ async function getUserDataByUID(uid) {
     catch (e) {
         console.log(e)
     }
-
 }
+
+
+async function getUserContactInfo(uid) {
+    try {
+       
+        const collection = common.db.collection(collectionName);
+        const query = await collection.doc(uid).get();
+        let contactInfo = {};
+        contactInfo.firstName = query.data().firstName;
+        contactInfo.lastName = query.data().lastName;
+        contactInfo.phoneNumber = query.data().phoneNumber;
+        return contactInfo;
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
+
 
 async function fillInUserData(id, user) {
     try {
@@ -71,5 +88,6 @@ export const Users = {
     getUserDataByUID: getUserDataByUID,
     fillInUserData: fillInUserData,
     checkIfUserFilledBasicData: checkIfUserFilledBasicData,
-    setUserLocation : setUserLocation
+    setUserLocation : setUserLocation,
+    getUserContactInfo: getUserContactInfo
 }
