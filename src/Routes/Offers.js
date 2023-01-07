@@ -59,13 +59,18 @@ export function Offers(app){
     // =========================== GET =========================== //
 
     app.get(
+        "/api/offers/getOffersByCategory",
+        controller.offers.getOffersByCategory
+    );
+
+    app.get(
         "/api/offers/getUserOffers",
         controller.offers.getUserOffers
     );
 
     app.get(
-        "/api/offers/getOffersByCategory",
-        controller.offers.getOffersByCategory
+        "/api/offers/getUserJobs",
+        controller.offers.getUserJobs
     );
 
     // =========================== PUT =========================== //

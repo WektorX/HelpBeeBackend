@@ -1,7 +1,7 @@
 import { common } from "./Common.js";
 import fs from 'firebase-admin';
 import geofire from 'geofire-common'
-import {Users} from './Users.js'
+import { Users } from './Users.js'
 const collectionName = 'offers';
 const Firestore = fs.firestore;
 
@@ -20,8 +20,8 @@ async function getUserOffers(uid) {
                     response.push(temp)
                 })
             })
-        for(let i =0; i < response.length; i++){
-            if(response[i].worker != ""){
+        for (let i = 0; i < response.length; i++) {
+            if (response[i].worker != "") {
                 const workerInfo = await Users.getUserContactInfo(response[i].worker);
                 response[i].workerFirstName = workerInfo.firstName;
                 response[i].workerLastName = workerInfo.lastName;
@@ -34,6 +34,37 @@ async function getUserOffers(uid) {
         console.log(e)
     }
 }
+
+
+
+async function getUserJobs(uid) {
+    try {
+        let response = [];
+        const collection = common.db.collection(collectionName);
+        const query = await collection.where('worker', '==', uid)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    let temp = doc.data();
+                    temp.serviceDate = new Firestore.Timestamp(temp.serviceDate._seconds, temp.serviceDate._nanoseconds).toDate();
+                    temp.id = doc.id;
+                    response.push(temp)
+                })
+            })
+        for (let i = 0; i < response.length; i++) {
+            const employerInfo = await Users.getUserContactInfo(response[i].userID);
+            response[i].employerFirstName = employerInfo.firstName;
+            response[i].employerLastName = employerInfo.lastName;
+            response[i].employerPhone = employerInfo.phoneNumber;
+        }
+        return response;
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
+
+
 
 async function getOffersByCategory(category, location, distance) {
     try {
@@ -136,12 +167,12 @@ async function updateOffer(id, offer) {
     }
 }
 
-async function takeOffer(uid, offerID){
+async function takeOffer(uid, offerID) {
     try {
         var result;
         let update = {
             status: 1,
-            worker : uid,
+            worker: uid,
             workerStatus: "requested"
         }
         const collection = common.db.collection(collectionName);
@@ -154,12 +185,12 @@ async function takeOffer(uid, offerID){
     }
 }
 
-async function resignFromOffer(uid, offerID){
+async function resignFromOffer(uid, offerID) {
     try {
         var result;
         let update = {
             status: 0,
-            worker : "",
+            worker: "",
             workersHistory: Firestore.FieldValue.arrayUnion(uid),
             workerStatus: "resign",
         }
@@ -175,7 +206,7 @@ async function resignFromOffer(uid, offerID){
 
 
 
-async function acceptWorker(offerID){
+async function acceptWorker(offerID) {
     try {
         var result;
         let update = {
@@ -192,12 +223,12 @@ async function acceptWorker(offerID){
 }
 
 
-async function rejectWorker(offerID, workerID){
+async function rejectWorker(offerID, workerID) {
     try {
         var result;
         let update = {
             status: 0,
-            worker : "",
+            worker: "",
             workersHistory: Firestore.FieldValue.arrayUnion(workerID),
             workerStatus: "rejected",
         }
@@ -223,5 +254,6 @@ export const Offers = {
     resignFromOffer: resignFromOffer,
     acceptWorker: acceptWorker,
     rejectWorker: rejectWorker,
-    closeOffer: closeOffer
+    closeOffer: closeOffer,
+    getUserJobs : getUserJobs
 }

@@ -2,9 +2,16 @@ import { db } from '../Database/DB.js';
 import fs from 'firebase-admin';
 
 const Firestore = fs.firestore;
+
 async function getUserOffers(req, res) {
     const uid = req.query.uid;
     const userData = await db.offers.getUserOffers(uid);
+    res.status(200).send({ data: userData })
+}
+
+async function getUserJobs(req, res){
+    const uid = req.query.uid;
+    const userData = await db.offers.getUserJobs(uid);
     res.status(200).send({ data: userData })
 }
 
@@ -118,5 +125,6 @@ export const Offers = {
     resignFromOffer: resignFromOffer,
     acceptWorker: acceptWorker,
     rejectWorker: rejectWorker,
-    closeOffer : closeOffer
+    closeOffer : closeOffer,
+    getUserJobs: getUserJobs
 }
