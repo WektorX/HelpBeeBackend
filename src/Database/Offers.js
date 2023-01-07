@@ -243,6 +243,23 @@ async function rejectWorker(offerID, workerID) {
 }
 
 
+async function reportOffer(offerID, userID) {
+    try {
+        var result;
+        let update = {
+            reportedBy: Firestore.FieldValue.arrayUnion(userID),
+        }
+        const collection = common.db.collection(collectionName);
+        result = await collection.doc(offerID).update(update);
+        return result;
+
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+
 export const Offers = {
     getUserOffers: getUserOffers,
     getOffersByCategory: getOffersByCategory,
@@ -255,5 +272,6 @@ export const Offers = {
     acceptWorker: acceptWorker,
     rejectWorker: rejectWorker,
     closeOffer: closeOffer,
-    getUserJobs : getUserJobs
+    getUserJobs : getUserJobs,
+    reportOffer: reportOffer
 }

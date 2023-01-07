@@ -56,6 +56,11 @@ export function Offers(app){
         "/api/offers/rejectWorker",
         controller.offers.rejectWorker
     );
+    
+    app.post(
+        "/api/offers/reportOffer",
+        controller.offers.reportOffer
+    );
     // =========================== GET =========================== //
 
     app.get(

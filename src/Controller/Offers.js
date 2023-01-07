@@ -40,6 +40,7 @@ async function insertOffer(req, res) {
         worker: "",
         workerStatus: "none",
         workersHistory: [],
+        reportedBy : [],
         status: 0,
     };
     const result = await db.offers.insertOffer(offer)
@@ -112,6 +113,13 @@ async function rejectWorker(req, res){
     res.status(200).send({ message: result });
 }
 
+async function reportOffer(req, res){
+    const offerID = req.body.offerID
+    const userID = req.body.userID
+    const result = await db.offers.reportOffer(offerID, userID);
+    res.status(200).send({ message: result });
+}
+
 
 
 export const Offers = {
@@ -126,5 +134,6 @@ export const Offers = {
     acceptWorker: acceptWorker,
     rejectWorker: rejectWorker,
     closeOffer : closeOffer,
-    getUserJobs: getUserJobs
+    getUserJobs: getUserJobs,
+    reportOffer: reportOffer
 }
