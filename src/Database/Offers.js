@@ -90,9 +90,31 @@ async function deleteOffer(id) {
 
 async function withdrawOffer(id) {
     try {
+        let update = {
+            status: 2,
+            workerStatus: "rejected",
+        }
         var result;
         const collection = common.db.collection(collectionName);
-        result = await collection.doc(id).update({ status: 2 });
+        result = await collection.doc(id).update(update);
+        return result;
+
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+
+async function closeOffer(id) {
+    try {
+        let update = {
+            status: 3,
+            workerStatus: "finished",
+        }
+        var result;
+        const collection = common.db.collection(collectionName);
+        result = await collection.doc(id).update(update);
         return result;
 
     } catch (error) {
@@ -200,5 +222,6 @@ export const Offers = {
     takeOffer: takeOffer,
     resignFromOffer: resignFromOffer,
     acceptWorker: acceptWorker,
-    rejectWorker: rejectWorker
+    rejectWorker: rejectWorker,
+    closeOffer: closeOffer
 }

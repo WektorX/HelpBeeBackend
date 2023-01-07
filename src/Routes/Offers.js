@@ -27,6 +27,11 @@ export function Offers(app){
     );
 
     app.post(
+        "/api/offers/closeOffer",
+        controller.offers.closeOffer
+    );
+
+    app.post(
         "/api/offers/updateOffer",
         controller.offers.updateOffer
     );

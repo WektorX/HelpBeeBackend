@@ -27,6 +27,7 @@ async function fillInUserData(req, res){
         addressID: "",
         description: "",
         location : new Firestore.GeoPoint(0,0),
+        email: req.body.email,
     };
     const result = await db.users.fillInUserData(id, user)
     res.status(200).send({message: result})

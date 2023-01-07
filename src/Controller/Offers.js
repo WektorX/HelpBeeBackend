@@ -52,6 +52,13 @@ async function withdrawOffer(req, res) {
     res.status(200).send({ message: result });
 }
 
+async function closeOffer(req, res) {
+    const docID = req.body.id;
+    console.log(docID)
+    const result = await db.offers.closeOffer(docID);
+    res.status(200).send({ message: result });
+}
+
 async function updateOffer(req, res) {
     const docID = req.body.id;
     let reqOffer = req.body.offer;
@@ -110,5 +117,6 @@ export const Offers = {
     takeOffer: takeOffer,
     resignFromOffer: resignFromOffer,
     acceptWorker: acceptWorker,
-    rejectWorker: rejectWorker
+    rejectWorker: rejectWorker,
+    closeOffer : closeOffer
 }
