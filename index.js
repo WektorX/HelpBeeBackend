@@ -11,6 +11,7 @@ app.use(bodyParser.json())
 Routes.listenAuth(app);
 Routes.listenUsers(app);
 Routes.listenOffers(app);
+Routes.listenRatings(app);
 
 
 app.listen(port, () => {

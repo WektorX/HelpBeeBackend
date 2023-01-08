@@ -23,9 +23,11 @@ async function getUserContactInfo(uid) {
         const collection = common.db.collection(collectionName);
         const query = await collection.doc(uid).get();
         let contactInfo = {};
-        contactInfo.firstName = query.data().firstName;
-        contactInfo.lastName = query.data().lastName;
-        contactInfo.phoneNumber = query.data().phoneNumber;
+        if(query.data()) {
+            contactInfo.firstName = query.data().firstName;
+            contactInfo.lastName = query.data().lastName;
+            contactInfo.phoneNumber = query.data().phoneNumber;
+        }
         return contactInfo;
     }
     catch (e) {

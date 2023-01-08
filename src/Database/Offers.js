@@ -2,6 +2,7 @@ import { common } from "./Common.js";
 import fs from 'firebase-admin';
 import geofire from 'geofire-common'
 import { Users } from './Users.js'
+import { Ratings } from "./Ratings.js";
 const collectionName = 'offers';
 const Firestore = fs.firestore;
 
@@ -11,6 +12,7 @@ async function getUserOffers(uid) {
         let response = [];
         const collection = common.db.collection(collectionName);
         const query = await collection.where('userID', '==', uid)
+            .orderBy("serviceDate", 'desc')
             .get()
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
@@ -26,6 +28,10 @@ async function getUserOffers(uid) {
                 response[i].workerFirstName = workerInfo.firstName;
                 response[i].workerLastName = workerInfo.lastName;
                 response[i].workerPhone = workerInfo.phoneNumber;
+                if (response[i].status == 3) {
+                    const rating = await Ratings.getRatingInfo(response[i].id);
+                    response[i].rating = rating;
+                }
             }
         }
         return response;
@@ -42,6 +48,7 @@ async function getUserJobs(uid) {
         let response = [];
         const collection = common.db.collection(collectionName);
         const query = await collection.where('worker', '==', uid)
+            .orderBy("serviceDate")
             .get()
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
@@ -72,6 +79,7 @@ async function getOffersByCategory(category, location, distance) {
         const userLocation = new Firestore.GeoPoint(parseFloat(location.Latitude), parseFloat(location.Longitude));
         const collection = common.db.collection(collectionName);
         const query = await collection.where('category', '==', category).where('status', '==', 0)
+            .orderBy("serviceDate")
             .get()
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
@@ -194,6 +202,7 @@ async function resignFromOffer(uid, offerID) {
             workersHistory: Firestore.FieldValue.arrayUnion(uid),
             workerStatus: "resign",
         }
+        console.log(offerID)
         const collection = common.db.collection(collectionName);
         result = await collection.doc(offerID).update(update);
         return result;
@@ -272,6 +281,6 @@ export const Offers = {
     acceptWorker: acceptWorker,
     rejectWorker: rejectWorker,
     closeOffer: closeOffer,
-    getUserJobs : getUserJobs,
+    getUserJobs: getUserJobs,
     reportOffer: reportOffer
 }
