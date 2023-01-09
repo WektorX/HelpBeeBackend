@@ -42,6 +42,8 @@ async function insertOffer(req, res) {
         workersHistory: [],
         reportedBy : [],
         status: 0,
+        blocked: false,
+        reviewed: false
     };
     const result = await db.offers.insertOffer(offer)
     res.status(200).send({ message: result })
@@ -62,7 +64,6 @@ async function withdrawOffer(req, res) {
 
 async function closeOffer(req, res) {
     const docID = req.body.id;
-    console.log(docID)
     const result = await db.offers.closeOffer(docID);
     res.status(200).send({ message: result });
 }
@@ -120,7 +121,20 @@ async function reportOffer(req, res){
     res.status(200).send({ message: result });
 }
 
+async function getReportedOffers(req, res) {
+    const reported = await db.offers.getReportedOffers();
+    res.status(200).send(reported)
+}
 
+async function getBlockedOffers(req, res) {
+    const reported = await db.offers.getBlockedOffers();
+    res.status(200).send(reported)
+}
+
+async function getAllOffers(req, res) {
+    const reported = await db.offers.getAllOffers();
+    res.status(200).send(reported)
+}
 
 export const Offers = {
     getUserOffers: getUserOffers,
@@ -135,5 +149,8 @@ export const Offers = {
     rejectWorker: rejectWorker,
     closeOffer : closeOffer,
     getUserJobs: getUserJobs,
-    reportOffer: reportOffer
+    reportOffer: reportOffer,
+    getReportedOffers: getReportedOffers,
+    getBlockedOffers: getBlockedOffers,
+    getAllOffers: getAllOffers
 }

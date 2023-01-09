@@ -269,6 +269,97 @@ async function reportOffer(offerID, userID) {
 }
 
 
+async function getReportedOffers() {
+    try {
+        let response = [];
+        const collection = common.db.collection(collectionName);
+        const query = await collection.where('reportedBy', '!=', [])
+            .where("reviewed", '==', false)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    let temp = doc.data();
+                    temp.serviceDate = new Firestore.Timestamp(temp.serviceDate._seconds, temp.serviceDate._nanoseconds).toDate();
+                    temp.publicationDate = new Firestore.Timestamp(temp.publicationDate._seconds, temp.publicationDate._nanoseconds).toDate();
+                    temp.id = doc.id;
+                    response.push(temp)
+
+                })
+            })
+
+        for (let i = 0; i < response.length; i++) {
+            const userInfo = await Users.getUserContactInfo(response[i].userID);
+            response[i].firstName = userInfo.firstName;
+            response[i].lastName = userInfo.lastName;
+        }
+        return response;
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
+
+
+async function getBlockedOffers() {
+    try {
+        let response = [];
+        const collection = common.db.collection(collectionName);
+        const query = await collection.where('reportedBy', '!=', [])
+            .where("blocked", '==', true)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    let temp = doc.data();
+                    temp.serviceDate = new Firestore.Timestamp(temp.serviceDate._seconds, temp.serviceDate._nanoseconds).toDate();
+                    temp.publicationDate = new Firestore.Timestamp(temp.publicationDate._seconds, temp.publicationDate._nanoseconds).toDate();
+                    temp.id = doc.id;
+                    response.push(temp)
+
+                })
+            })
+
+        for (let i = 0; i < response.length; i++) {
+            const userInfo = await Users.getUserContactInfo(response[i].userID);
+            response[i].firstName = userInfo.firstName;
+            response[i].lastName = userInfo.lastName;
+        }
+        return response;
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
+
+
+async function getAllOffers() {
+    try {
+        let response = [];
+        const collection = common.db.collection(collectionName);
+        const query = await collection.where('userID', '!=', "")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    let temp = doc.data();
+                    temp.serviceDate = new Firestore.Timestamp(temp.serviceDate._seconds, temp.serviceDate._nanoseconds).toDate();
+                    temp.publicationDate = new Firestore.Timestamp(temp.publicationDate._seconds, temp.publicationDate._nanoseconds).toDate();
+                    temp.id = doc.id;
+                    response.push(temp)
+
+                })
+            })
+
+        for (let i = 0; i < response.length; i++) {
+            const userInfo = await Users.getUserContactInfo(response[i].userID);
+            response[i].firstName = userInfo.firstName;
+            response[i].lastName = userInfo.lastName;
+        }
+        return response;
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
+
 export const Offers = {
     getUserOffers: getUserOffers,
     getOffersByCategory: getOffersByCategory,
@@ -282,5 +373,8 @@ export const Offers = {
     rejectWorker: rejectWorker,
     closeOffer: closeOffer,
     getUserJobs: getUserJobs,
-    reportOffer: reportOffer
+    reportOffer: reportOffer,
+    getReportedOffers: getReportedOffers,
+    getBlockedOffers: getBlockedOffers,
+    getAllOffers: getAllOffers
 }

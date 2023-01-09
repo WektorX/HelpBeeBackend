@@ -16,7 +16,6 @@ async function getUserContactInfo(req, res){
 }
 
 async function fillInUserData(req, res){
-    console.log(req.body)
     let dateParts = req.body.birthDate.split(".");
     const id = req.body.uid;
     const user = {
@@ -28,6 +27,7 @@ async function fillInUserData(req, res){
         description: "",
         location : new Firestore.GeoPoint(0,0),
         email: req.body.email,
+        userType: 'normal',
     };
     const result = await db.users.fillInUserData(id, user)
     res.status(200).send({message: result})
@@ -46,11 +46,24 @@ async function setUserLocation(req, res){
     res.status(200).send({message: result})
 }
 
+async function getUserType(req, res) {
+    const id = req.query.uid;
+    const result = await db.users.getUserType(id)
+    res.status(200).send({userType: result})
+}
+
+async function getAllUsers(req, res) {
+    const result = await db.users.getAllUsers()
+    res.status(200).send(result)
+}
+
 export const Users = {
     getUserDataByUID: getUserDataByUID,
     fillInUserData: fillInUserData,
     checkIfUserFilledBasicData: checkIfUserFilledBasicData,
     setUserLocation : setUserLocation,
-    getUserContactInfo:getUserContactInfo
+    getUserContactInfo:getUserContactInfo,
+    getUserType: getUserType,
+    getAllUsers: getAllUsers
     
 }

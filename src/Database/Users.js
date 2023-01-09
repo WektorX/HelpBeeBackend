@@ -84,12 +84,50 @@ async function checkIfUserFilledBasicData(id) {
     }
 }
 
+async function getUserType(uid) {
+    try {
+       
+        const collection = common.db.collection(collectionName);
+        const query = await collection.doc(uid).get();
+        let userType = 'normal';
+        if(query.data()) {
+            userType = query.data().userType;
+        }
+        return userType;
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
 
+
+async function getAllUsers() {
+    try {
+        let response = [];
+        const collection = common.db.collection(collectionName);
+        const query = await collection.where('firstName', '!=', "")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    let temp = doc.data();
+                    temp.id = doc.id;
+                    response.push(temp)
+
+                })
+            })
+        return response;
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
 
 export const Users = {
     getUserDataByUID: getUserDataByUID,
     fillInUserData: fillInUserData,
     checkIfUserFilledBasicData: checkIfUserFilledBasicData,
     setUserLocation : setUserLocation,
-    getUserContactInfo: getUserContactInfo
+    getUserContactInfo: getUserContactInfo,
+    getUserType: getUserType,
+    getAllUsers: getAllUsers
 }

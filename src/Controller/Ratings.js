@@ -34,7 +34,6 @@ async function getUserRating(req, res){
         firstName : user.firstName,
         lastName: user.lastName
     }
-    console.log(result)
     res.status(200).send(result)
 }
 

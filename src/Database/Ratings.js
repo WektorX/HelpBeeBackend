@@ -19,7 +19,6 @@ async function insertRate(rating) {
 
 async function getComments(uid) {
     try {
-        console.log(uid)
         const response = [];
         const collection = common.db.collection(collectionName);
         const query = await collection.where("workerID", "==", uid)

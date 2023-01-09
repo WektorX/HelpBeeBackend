@@ -35,7 +35,16 @@ export function Users(app) {
         controller.users.getUserContactInfo
     )
 
+    app.get(
+        "/api/users/getUserType",
+        controller.users.getUserType
+    )
 
+
+    app.get(
+        "/api/users/getAllUsers",
+        controller.users.getAllUsers
+    );
     // =========================== PUT =========================== //
 
 

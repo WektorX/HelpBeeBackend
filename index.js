@@ -1,12 +1,12 @@
 import { Routes } from './src/Routes/Routes.js';
 import express from 'express';
 import bodyParser from 'body-parser';
-
+import cors from 'cors'
 const app = express()
 const port = 3000
 
 
-app.use(bodyParser.json())
+app.use(bodyParser.json(), cors())
 
 Routes.listenAuth(app);
 Routes.listenUsers(app);
