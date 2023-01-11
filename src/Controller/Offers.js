@@ -20,7 +20,8 @@ async function getOffersByCategory(req, res) {
     const category = req.query.category;
     const location = req.query.location;
     const distance = req.query.distance;
-    const offers = await db.offers.getOffersByCategory(category, location, distance);
+    const uid = req.query.uid;
+    const offers = await db.offers.getOffersByCategory(category, location, distance, uid);
     res.status(200).send({ offers })
 }
 

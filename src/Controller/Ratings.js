@@ -32,7 +32,8 @@ async function getUserRating(req, res){
         rating : rating,
         comments: comments,
         firstName : user.firstName,
-        lastName: user.lastName
+        lastName: user.lastName,
+        phoneNumber: user.phoneNumber
     }
     res.status(200).send(result)
 }

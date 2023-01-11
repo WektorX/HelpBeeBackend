@@ -73,12 +73,14 @@ async function getUserJobs(uid) {
 
 
 
-async function getOffersByCategory(category, location, distance) {
+async function getOffersByCategory(category, location, distance, uid) {
     try {
         let response = [];
         const userLocation = new Firestore.GeoPoint(parseFloat(location.Latitude), parseFloat(location.Longitude));
         const collection = common.db.collection(collectionName);
-        const query = await collection.where('category', '==', category).where('status', '==', 0)
+        const query = await collection.where('category', '==', category)
+            .where('status', '==', 0)
+            .where('blocked', '==', false)
             .orderBy("serviceDate")
             .get()
             .then((querySnapshot) => {
@@ -88,7 +90,7 @@ async function getOffersByCategory(category, location, distance) {
                     temp.id = doc.id;
                     let offerLocation = new Firestore.GeoPoint(temp.location._latitude, temp.location._longitude)
                     let distanceInKM = geofire.distanceBetween([userLocation.latitude, userLocation.longitude], [offerLocation.latitude, offerLocation.longitude]);
-                    if (distanceInKM <= distance)
+                    if (distanceInKM <= distance && temp.userID != uid)
                         response.push(temp)
 
                 })
