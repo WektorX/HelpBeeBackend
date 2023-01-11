@@ -25,7 +25,11 @@ export function Offers(app){
         "/api/offers/withdrawOffer",
         controller.offers.withdrawOffer
     );
-
+    
+    app.post(
+        "/api/offers/restoreOffer",
+        controller.offers.restoreOffer
+    );
     app.post(
         "/api/offers/closeOffer",
         controller.offers.closeOffer

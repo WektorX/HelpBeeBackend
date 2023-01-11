@@ -63,6 +63,11 @@ async function withdrawOffer(req, res) {
     res.status(200).send({ message: result });
 }
 
+async function restoreOffer(req, res) {
+    const docID = req.body.id;
+    const result = await db.offers.restoreOffer(docID);
+    res.status(200).send({ message: result });
+}
 async function closeOffer(req, res) {
     const docID = req.body.id;
     const result = await db.offers.closeOffer(docID);
@@ -153,5 +158,6 @@ export const Offers = {
     reportOffer: reportOffer,
     getReportedOffers: getReportedOffers,
     getBlockedOffers: getBlockedOffers,
-    getAllOffers: getAllOffers
+    getAllOffers: getAllOffers,
+    restoreOffer: restoreOffer
 }

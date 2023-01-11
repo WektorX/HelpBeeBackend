@@ -147,6 +147,32 @@ async function withdrawOffer(id) {
 }
 
 
+async function restoreOffer(id) {
+    try {
+        let update = {
+            status: 0,
+            workerStatus: "none",
+            workersHistory: [],
+            blocked: false,
+            reviewed: false,
+            reportedBy: [],
+            worker: "",
+            publicationDate: new Date(),
+            
+        }
+        var result;
+        const collection = common.db.collection(collectionName);
+        result = await collection.doc(id).update(update);
+        return result;
+
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+
+
 async function closeOffer(id) {
     try {
         let update = {
@@ -378,5 +404,6 @@ export const Offers = {
     reportOffer: reportOffer,
     getReportedOffers: getReportedOffers,
     getBlockedOffers: getBlockedOffers,
-    getAllOffers: getAllOffers
+    getAllOffers: getAllOffers,
+    restoreOffer: restoreOffer
 }
