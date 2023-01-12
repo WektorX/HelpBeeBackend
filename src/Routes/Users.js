@@ -18,8 +18,15 @@ export function Users(app) {
 
     app.post('/api/users/setUserLocation', controller.users.setUserLocation)
 
+    app.post('/api/users/setPreferences', controller.users.setPreferences)
+
+    app.post('/api/users/setPermissions', controller.users.setPermissions)
+
+
+
     // =========================== GET =========================== //
 
+    
     app.get(
         "/api/users/getUserDataByUID",
         controller.users.getUserDataByUID

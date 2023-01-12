@@ -28,10 +28,13 @@ async function fillInUserData(req, res){
         location : new Firestore.GeoPoint(0,0),
         email: req.body.email,
         userType: 'normal',
+        distance: 0,
+        preferences: []
     };
     const result = await db.users.fillInUserData(id, user)
     res.status(200).send({message: result})
 }
+
 
 async function checkIfUserFilledBasicData(req, res){
     const id = req.query.uid;
@@ -43,6 +46,21 @@ async function setUserLocation(req, res){
     var location = new Firestore.GeoPoint(req.body.location.Latitude, req.body.location.Longitude);
     const id = req.body.uid;
     const result = await db.users.setUserLocation(id, location)
+    res.status(200).send({message: result})
+}
+
+async function setPermissions(req, res){
+    const uid = req.body.uid;
+    const userType = req.body.userType;
+    const result = await db.users.setPermissions(uid, userType)
+    res.status(200).send({message: result})
+}
+
+async function setPreferences(req, res){
+    const uid = req.body.uid;
+    const distance = req.body.distance;
+    const preferences = req.body.preferences;
+    const result = await db.users.setPreferences(uid, distance, preferences)
     res.status(200).send({message: result})
 }
 
@@ -64,6 +82,8 @@ export const Users = {
     setUserLocation : setUserLocation,
     getUserContactInfo:getUserContactInfo,
     getUserType: getUserType,
-    getAllUsers: getAllUsers
+    getAllUsers: getAllUsers,
+    setPreferences: setPreferences,
+    setPermissions : setPermissions
     
 }

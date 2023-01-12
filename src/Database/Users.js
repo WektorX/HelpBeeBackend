@@ -63,6 +63,40 @@ async function setUserLocation(id, location){
 }
 
 
+async function setPreferences(uid, distance, preferences){
+    try {
+        let update = {
+            distance : distance,
+            preferences: preferences
+        }
+        var result;
+        const collection = common.db.collection(collectionName);
+        result = await collection.doc(uid).update(update);
+        return result;
+
+    } catch (error) {
+        console.log(error)
+        return error
+    } 
+}
+
+
+async function setPermissions(uid, userType){
+    try {
+        let update = {
+            userType : userType,
+        }
+        var result;
+        const collection = common.db.collection(collectionName);
+        result = await collection.doc(uid).update(update);
+        return result;
+
+    } catch (error) {
+        console.log(error)
+        return error
+    } 
+}
+
 async function checkIfUserFilledBasicData(id) {
     try {
         var result = {
@@ -129,5 +163,7 @@ export const Users = {
     setUserLocation : setUserLocation,
     getUserContactInfo: getUserContactInfo,
     getUserType: getUserType,
-    getAllUsers: getAllUsers
+    getAllUsers: getAllUsers,
+    setPreferences: setPreferences,
+    setPermissions: setPermissions
 }

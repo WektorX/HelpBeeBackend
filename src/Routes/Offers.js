@@ -78,6 +78,11 @@ export function Offers(app){
     );
 
     app.get(
+        "/api/offers/getNewOffers",
+        controller.offers.getNewOffers
+    );
+
+    app.get(
         "/api/offers/getUserJobs",
         controller.offers.getUserJobs
     );
@@ -97,6 +102,15 @@ export function Offers(app){
     app.get(
         "/api/offers/getAllOffers",
         controller.offers.getAllOffers
+    );
+
+    app.post(
+        "/api/offers/setBlockOffer",
+        controller.offers.setBlockOffer
+    );
+    app.post(
+        "/api/offers/setReviewedOffer",
+        controller.offers.setReviewedOffer
     );
     // =========================== PUT =========================== //
 

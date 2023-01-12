@@ -102,6 +102,36 @@ async function getOffersByCategory(category, location, distance, uid) {
     }
 }
 
+
+async function getNewOffers(uid, distance, location, categories, date) {
+    try {
+        let response = [];
+        let minuteAgo = new Date(date.valueOf() - 10000);
+        const userLocation = new Firestore.GeoPoint(parseFloat(location.Latitude), parseFloat(location.Longitude));
+        const collection = common.db.collection(collectionName);
+        const query = await collection.where('category', 'in', categories)
+            .where('status', '==', 0)
+            .where('blocked', '==', false)
+            .where("publicationDate", ">=", minuteAgo)
+            .where('publicationDate', "<=", date)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    let temp = doc.data();
+                    let offerLocation = new Firestore.GeoPoint(temp.location._latitude, temp.location._longitude)
+                    let distanceInKM = geofire.distanceBetween([userLocation.latitude, userLocation.longitude], [offerLocation.latitude, offerLocation.longitude]);
+                    if (distanceInKM <= distance && temp.userID != uid)
+                        response.push(temp)
+
+                })
+            })
+        return response;
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
+
 async function insertOffer(offer) {
     try {
         var result;
@@ -158,7 +188,7 @@ async function restoreOffer(id) {
             reportedBy: [],
             worker: "",
             publicationDate: new Date(),
-            
+
         }
         var result;
         const collection = common.db.collection(collectionName);
@@ -296,6 +326,39 @@ async function reportOffer(offerID, userID) {
     }
 }
 
+async function setBlockOffer(id, blocked) {
+    try {
+        var result;
+        let update = {
+            blocked: blocked,
+            reviewed: true
+        }
+        const collection = common.db.collection(collectionName);
+        result = await collection.doc(id).update(update);
+        return result;
+
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+async function setReviewedOffer(id, blocked) {
+    try {
+        var result;
+        let update = {
+            reviewed: true
+        }
+        const collection = common.db.collection(collectionName);
+        result = await collection.doc(id).update(update);
+        return result;
+
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
 
 async function getReportedOffers() {
     try {
@@ -405,5 +468,8 @@ export const Offers = {
     getReportedOffers: getReportedOffers,
     getBlockedOffers: getBlockedOffers,
     getAllOffers: getAllOffers,
-    restoreOffer: restoreOffer
+    restoreOffer: restoreOffer,
+    setBlockOffer: setBlockOffer,
+    setReviewedOffer :setReviewedOffer,
+    getNewOffers :getNewOffers
 }

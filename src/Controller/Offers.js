@@ -25,6 +25,21 @@ async function getOffersByCategory(req, res) {
     res.status(200).send({ offers })
 }
 
+
+
+async function getNewOffers(req, res) {
+    let date = new Date();
+    const categories = req.query.categories;
+    const uid = req.query.uid;
+    const distance = req.query.distance;
+    const location = req.query.location;
+    let offers = [];
+    if(categories && distance && location && uid){
+        offers = await db.offers.getNewOffers(uid, distance, location, categories, date);
+    }
+    res.status(200).send({ data: offers })
+}
+
 async function insertOffer(req, res) {
 
     let reqObj = req.body;
@@ -133,13 +148,28 @@ async function getReportedOffers(req, res) {
 }
 
 async function getBlockedOffers(req, res) {
-    const reported = await db.offers.getBlockedOffers();
-    res.status(200).send(reported)
+    const result = await db.offers.getBlockedOffers();
+    res.status(200).send(result)
 }
 
 async function getAllOffers(req, res) {
-    const reported = await db.offers.getAllOffers();
-    res.status(200).send(reported)
+    const result = await db.offers.getAllOffers();
+    res.status(200).send(result)
+}
+
+
+
+async function setBlockOffer(req, res) {
+    const id = req.body.id;
+    const blocked = req.body.blocked;
+    const result = await db.offers.setBlockOffer(id, blocked);
+    res.status(200).send(result)
+}
+
+async function setReviewedOffer(req, res) {
+    const id = req.body.id;
+    const result = await db.offers.setReviewedOffer(id);
+    res.status(200).send(result)
 }
 
 export const Offers = {
@@ -159,5 +189,8 @@ export const Offers = {
     getReportedOffers: getReportedOffers,
     getBlockedOffers: getBlockedOffers,
     getAllOffers: getAllOffers,
-    restoreOffer: restoreOffer
+    restoreOffer: restoreOffer,
+    setBlockOffer: setBlockOffer,
+    setReviewedOffer: setReviewedOffer,
+    getNewOffers : getNewOffers
 }

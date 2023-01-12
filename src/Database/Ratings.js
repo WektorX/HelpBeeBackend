@@ -78,7 +78,10 @@ async function getRatings(uid) {
                 numberOfRatings += 1;
             })
         })
-        return (sum / numberOfRatings).toFixed(2);
+        let rating = 0;
+        if(numberOfRatings > 0)
+        rating = (sum / numberOfRatings).toFixed(2);
+        return rating;
     }
     catch (e) {
         console.log(e)
