@@ -23,10 +23,14 @@ export function Users(app) {
     app.post('/api/users/setPermissions', controller.users.setPermissions)
 
 
-
     // =========================== GET =========================== //
 
-    
+    app.get(
+        "/api/users/checkIfBlocked",
+        controller.users.checkIfBlocked
+    );
+
+
     app.get(
         "/api/users/getUserDataByUID",
         controller.users.getUserDataByUID

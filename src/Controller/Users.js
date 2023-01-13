@@ -3,6 +3,12 @@ import fs from 'firebase-admin';
 
 const Firestore = fs.firestore;
 
+async function checkIfBlocked(req, res){
+    const uid = req.query.uid;
+    const blocked = await db.users.checkIfBlocked(uid);
+    res.status(200).send({blocked : blocked})
+}
+
 async function getUserDataByUID(req, res){
     const uid = req.query.uid;
     const userData = await db.users.getUserDataByUID(uid);
@@ -29,7 +35,8 @@ async function fillInUserData(req, res){
         email: req.body.email,
         userType: 'normal',
         distance: 0,
-        preferences: []
+        preferences: [],
+        blocked: false
     };
     const result = await db.users.fillInUserData(id, user)
     res.status(200).send({message: result})
@@ -52,7 +59,8 @@ async function setUserLocation(req, res){
 async function setPermissions(req, res){
     const uid = req.body.uid;
     const userType = req.body.userType;
-    const result = await db.users.setPermissions(uid, userType)
+    const blocked = req.body.blocked
+    const result = await db.users.setPermissions(uid, userType, blocked)
     res.status(200).send({message: result})
 }
 
@@ -75,6 +83,13 @@ async function getAllUsers(req, res) {
     res.status(200).send(result)
 }
 
+async function blockUser(req, res){
+    const uid = req.body.uid;
+    const block = req.body.block;
+    const result = await db.users.blockUser(uid, block)
+    res.status(200).send({message: result})
+}
+
 export const Users = {
     getUserDataByUID: getUserDataByUID,
     fillInUserData: fillInUserData,
@@ -84,6 +99,8 @@ export const Users = {
     getUserType: getUserType,
     getAllUsers: getAllUsers,
     setPreferences: setPreferences,
-    setPermissions : setPermissions
+    setPermissions : setPermissions,
+    checkIfBlocked: checkIfBlocked,
+    blockUser: blockUser
     
 }

@@ -2,6 +2,20 @@ import { common } from "./Common.js";
 import fs from 'firebase-admin';
 const collectionName = 'users';
 
+
+async function checkIfBlocked(uid){
+    try {
+
+        const collection = common.db.collection(collectionName);
+        const query = await collection.doc(uid).get();
+        const response = query.data().blocked;
+        return response;
+    }
+    catch (e) {
+        console.log(e)
+    } 
+}
+
 async function getUserDataByUID(uid) {
     try {
        
@@ -80,11 +94,28 @@ async function setPreferences(uid, distance, preferences){
     } 
 }
 
+async function blockUser(uid, block){
+    try {
+        let update = {
+            block : block,
+        }
+        var result;
+        const collection = common.db.collection(collectionName);
+        result = await collection.doc(uid).update(update);
+        return result;
 
-async function setPermissions(uid, userType){
+    } catch (error) {
+        console.log(error)
+        return error
+    } 
+}
+
+
+async function setPermissions(uid, userType, blocked){
     try {
         let update = {
             userType : userType,
+            blocked: blocked
         }
         var result;
         const collection = common.db.collection(collectionName);
@@ -165,5 +196,7 @@ export const Users = {
     getUserType: getUserType,
     getAllUsers: getAllUsers,
     setPreferences: setPreferences,
-    setPermissions: setPermissions
+    setPermissions: setPermissions,
+    checkIfBlocked: checkIfBlocked,
+    blockUser: blockUser
 }
