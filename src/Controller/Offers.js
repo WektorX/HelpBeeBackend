@@ -1,5 +1,6 @@
 import { db } from '../Database/DB.js';
 import fs from 'firebase-admin';
+import sendEmail from '../Email/Email.js';
 
 const Firestore = fs.firestore;
 
@@ -157,12 +158,29 @@ async function getAllOffers(req, res) {
     res.status(200).send(result)
 }
 
-
-
 async function setBlockOffer(req, res) {
     const id = req.body.id;
     const blocked = req.body.blocked;
     const result = await db.offers.setBlockOffer(id, blocked);
+    if(result){
+        const userID = req.body.userID;
+        const userContact = await db.users.getUserContactInfo(userID);
+        const title = req.body.title;
+        let subject = blocked? "Zablokowana oferta" : "Oferta odblokowana"
+        let blockedOffer = "Twoja oferta <b>\"" + title + "\"</b> została zablokowana. Zawiera ona wulgaryzmy lub treści łamiące regulamin aplikcaji. Aby, odblokować ofertę odpowiedz na tego maila!";
+        let unblockedOffer = "Twoja oferta <b>\"" + title + "\"</b> została odblokowana."
+        let text = blocked ? blockedOffer : unblockedOffer;
+        sendEmail(userContact.email, subject, text);
+        const worker = req.body.worker;
+        if(worker !== ""){
+            const workerContact = await db.users.getUserContactInfo(worker);
+            blockedOffer = "Oferta, którą obserwujesz <b>\"" + title + "\"</b> została zablokowana. Przepraszamy za niedogodności.";
+            unblockedOffer = "Oferta <b>\"" + title + "\"<b>została odblokowana."
+            text = blocked ? blockedOffer : unblockedOffer;
+            sendEmail(workerContact.email, subject, text)
+        }
+
+    }
     res.status(200).send(result)
 }
 

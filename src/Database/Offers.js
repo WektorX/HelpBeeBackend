@@ -335,11 +335,11 @@ async function setBlockOffer(id, blocked) {
         }
         const collection = common.db.collection(collectionName);
         result = await collection.doc(id).update(update);
-        return result;
+        return true;
 
     } catch (error) {
         console.log(error)
-        return error
+        return false
     }
 }
 

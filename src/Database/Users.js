@@ -8,7 +8,9 @@ async function checkIfBlocked(uid){
 
         const collection = common.db.collection(collectionName);
         const query = await collection.doc(uid).get();
-        const response = query.data().blocked;
+        var response = false;
+        if(query.data() != undefined && query.data().blocked === false)
+            response = true
         return response;
     }
     catch (e) {
@@ -40,7 +42,7 @@ async function getUserContactInfo(uid) {
         if(query.data()) {
             contactInfo.firstName = query.data().firstName;
             contactInfo.lastName = query.data().lastName;
-            contactInfo.phoneNumber = query.data().phoneNumber;
+            contactInfo.email = query.data().email;
         }
         return contactInfo;
     }
