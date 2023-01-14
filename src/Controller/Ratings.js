@@ -1,11 +1,24 @@
 import {db} from '../Database/DB.js';
 import fs from 'firebase-admin';
+import sendEmail from '../Email/Email.js';
 
-const Firestore = fs.firestore;
 
 async function insertRate(req, res){
     const rating = req.body.rating;
+    let workerID = rating.workerID;
+    let userID = rating.employerID;
+    let rate = rating.rating;
+    let comment = rating.comment;
     const result = await db.ratings.insertRate(rating);
+    if(result == true){
+        const userContact = await db.users.getUserContactInfo(userID)
+        const workerContact = await db.users.getUserContactInfo(workerID);
+        let text = "Użytkownik " + userContact.firstName + " " + userContact.lastName.charAt(0) + ". wystawił ci ocenę " + rate.toFixed(1) +".";
+        if(comment != ''){
+            text += 'Dodał także komentarz \"' + comment + "\".";
+        } 
+        sendEmail(workerContact.email, "Nowa ocena", text)
+    }
     res.status(200).send({message: result})
 }
 

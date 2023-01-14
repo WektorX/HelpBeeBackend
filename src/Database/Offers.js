@@ -150,29 +150,32 @@ async function deleteOffer(id) {
         var result;
         const collection = common.db.collection(collectionName);
         result = await collection.doc(id).delete();
-        return result;
+        return true;
 
     } catch (error) {
         console.log(error)
-        return error
+        return false
     }
 }
 
 
-async function withdrawOffer(id) {
+async function withdrawOffer(id, workerID) {
     try {
         let update = {
             status: 2,
             workerStatus: "rejected",
+            worker: '',
         }
+        if(workerID !== '')
+            update.workersHistory = Firestore.FieldValue.arrayUnion(workerID);
         var result;
         const collection = common.db.collection(collectionName);
         result = await collection.doc(id).update(update);
-        return result;
+        return true;
 
     } catch (error) {
         console.log(error)
-        return error
+        return false
     }
 }
 
@@ -212,11 +215,11 @@ async function closeOffer(id) {
         var result;
         const collection = common.db.collection(collectionName);
         result = await collection.doc(id).update(update);
-        return result;
+        return true;
 
     } catch (error) {
         console.log(error)
-        return error
+        return false
     }
 }
 
@@ -225,11 +228,11 @@ async function updateOffer(id, offer) {
         var result;
         const collection = common.db.collection(collectionName);
         result = await collection.doc(id).update(offer);
-        return result;
+        return true;
 
     } catch (error) {
         console.log(error)
-        return error
+        return false
     }
 }
 
@@ -243,11 +246,11 @@ async function takeOffer(uid, offerID) {
         }
         const collection = common.db.collection(collectionName);
         result = await collection.doc(offerID).update(update);
-        return result;
+        return true;
 
     } catch (error) {
         console.log(error)
-        return error
+        return false
     }
 }
 
@@ -260,14 +263,13 @@ async function resignFromOffer(uid, offerID) {
             workersHistory: Firestore.FieldValue.arrayUnion(uid),
             workerStatus: "resign",
         }
-        console.log(offerID)
         const collection = common.db.collection(collectionName);
         result = await collection.doc(offerID).update(update);
-        return result;
+        return true;
 
     } catch (error) {
         console.log(error)
-        return error
+        return false
     }
 }
 
@@ -281,11 +283,11 @@ async function acceptWorker(offerID) {
         }
         const collection = common.db.collection(collectionName);
         result = await collection.doc(offerID).update(update);
-        return result;
+        return true;
 
     } catch (error) {
         console.log(error)
-        return error
+        return false
     }
 }
 
@@ -301,11 +303,11 @@ async function rejectWorker(offerID, workerID) {
         }
         const collection = common.db.collection(collectionName);
         result = await collection.doc(offerID).update(update);
-        return result;
+        return true;
 
     } catch (error) {
         console.log(error)
-        return error
+        return false
     }
 }
 
@@ -395,8 +397,7 @@ async function getBlockedOffers() {
     try {
         let response = [];
         const collection = common.db.collection(collectionName);
-        const query = await collection.where('reportedBy', '!=', [])
-            .where("blocked", '==', true)
+        const query = await collection.where("blocked", '==', true)
             .get()
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {

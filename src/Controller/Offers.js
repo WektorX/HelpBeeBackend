@@ -34,11 +34,15 @@ async function getNewOffers(req, res) {
     const uid = req.query.uid;
     const distance = req.query.distance;
     const location = req.query.location;
+
     let offers = [];
-    if(categories && distance && location && uid){
+    if(categories != undefined && distance > 0  && location != undefined && uid != ''){
         offers = await db.offers.getNewOffers(uid, distance, location, categories, date);
+        res.status(200).send({ data: offers })
     }
-    res.status(200).send({ data: offers })
+    else{
+        res.status(200).send({data: []})
+    }
 }
 
 async function insertOffer(req, res) {
@@ -49,7 +53,7 @@ async function insertOffer(req, res) {
         serviceDate: new Date(+dateParts[0], parseInt(dateParts[1]) - 1, +dateParts[2], 1, 0, 0),
         location: new Firestore.GeoPoint(reqObj.location.latitude, reqObj.location.longitude),
         description: reqObj.description,
-        title: reqObj.title,
+        title: reqObj.title.trim(),
         category: reqObj.category,
         publicationDate: new Date(),
         userID: reqObj.uid,
@@ -69,13 +73,31 @@ async function insertOffer(req, res) {
 
 async function deleteOffer(req, res) {
     const docID = req.body.id;
+    const title = req.body.title;
+    let workerID = req.body.workerID;
+    let userID = req.body.userID;
     const result = await db.offers.deleteOffer(docID);
+    if(result == true){
+        const userContact = await db.users.getUserContactInfo(userID)
+        const workerContact = await db.users.getUserContactInfo(workerID);
+        let text = "Użytkownik " + userContact.firstName + " " + userContact.lastName.charAt(0) + ". usunął ofertę <b>\"" + title +"\"</b>, którą obserwowałeś."
+        sendEmail(workerContact.email, title , text)
+    }
     res.status(200).send({ message: result });
 }
 
 async function withdrawOffer(req, res) {
     const docID = req.body.id;
-    const result = await db.offers.withdrawOffer(docID);
+    const title = req.body.title;
+    let workerID = req.body.workerID;
+    let userID = req.body.userID;
+    const result = await db.offers.withdrawOffer(docID, workerID);
+    if(result == true && workerID != ""){
+        const userContact = await db.users.getUserContactInfo(userID)
+        const workerContact = await db.users.getUserContactInfo(workerID);
+        let text = "Użytkownik " + userContact.firstName + " " + userContact.lastName.charAt(0) + ". wycofał ofertę <b>\"" + title +"\"</b>, którą obserwowałeś."
+        sendEmail(workerContact.email, title , text)
+    }
     res.status(200).send({ message: result });
 }
 
@@ -86,7 +108,16 @@ async function restoreOffer(req, res) {
 }
 async function closeOffer(req, res) {
     const docID = req.body.id;
+    const title = req.body.title;
+    let workerID = req.body.workerID;
+    let userID = req.body.userID;
     const result = await db.offers.closeOffer(docID);
+    if(result == true){
+        const userContact = await db.users.getUserContactInfo(userID)
+        const workerContact = await db.users.getUserContactInfo(workerID);
+        let text = "Użytkownik " + userContact.firstName + " " + userContact.lastName.charAt(0) + ". zakończył ofertę <b>\"" + title +"\"</b>, którą obserwowałeś."
+        sendEmail(workerContact.email, title , text)
+    }
     res.status(200).send({ message: result });
 }
 
@@ -94,45 +125,86 @@ async function updateOffer(req, res) {
     const docID = req.body.id;
     let reqOffer = req.body.offer;
     let dateParts = reqOffer.serviceDate.split("-");
+    let workerID = req.body.worker;
+    let userID = req.body.userID;
     const offer = {
         serviceDate: new Date(+dateParts[0], parseInt(dateParts[1]) - 1, +dateParts[2], 1, 0, 0),
         location: new Firestore.GeoPoint(reqOffer.location.latitude, reqOffer.location.longitude),
         description: reqOffer.description,
-        title: reqOffer.title,
+        title: reqOffer.title.trim(),
         category: reqOffer.category,
         status: reqOffer.status,
         reward: reqOffer.reward,
     };
     const result = await db.offers.updateOffer(docID, offer);
+    if(result == true){
+        const userContact = await db.users.getUserContactInfo(userID)
+        const workerContact = await db.users.getUserContactInfo(workerID);
+        let text = "Użytkownik " + userContact.firstName + " " + userContact.lastName.charAt(0) + ". zaktualizował dane ofertę <b>\"" + reqOffer.title.trim() +"\"</b>, którą obserwujesz."
+        sendEmail(workerContact.email, reqOffer.title.trim(), text)
+    }
     res.status(200).send({ message: result });
 
 }
 
 
 async function takeOffer(req, res){
-    const userID = req.body.uid;
+    const workerID = req.body.workerID;
     const offerID = req.body.offerID
-    const result = await db.offers.takeOffer(userID, offerID);
+    const userID = req.body.userID;
+    const title = req.body.title
+    const result = await db.offers.takeOffer(workerID, offerID);
+    if(result == true){
+        const userContact = await db.users.getUserContactInfo(userID)
+        const workerContact = await db.users.getUserContactInfo(workerID);
+        let text = "Użytkownik " + workerContact.firstName + " " + workerContact.lastName.charAt(0) + ". złożył propozycję wykonania twojej oferty <b>\"" + title +"\"</b>."
+        sendEmail(userContact.email, title, text)
+    }
     res.status(200).send({ message: result });
 }
 
 async function resignFromOffer(req, res){
-    const userID = req.body.uid;
+    const workerID = req.body.workerID;
     const offerID = req.body.offerID
-    const result = await db.offers.resignFromOffer(userID, offerID);
+    const userID = req.body.userID;
+    const title = req.body.title
+    const result = await db.offers.resignFromOffer(workerID, offerID);
+    if(result == true){
+        const userContact = await db.users.getUserContactInfo(userID)
+        const workerContact = await db.users.getUserContactInfo(workerID);
+        let text = "Użytkownik " + workerContact.firstName + " " + workerContact.lastName.charAt(0) + ". zrezygnował z wykonania twojej oferty <b>\"" + title +"\"</b>."
+        sendEmail(userContact.email, title, text)
+    }
     res.status(200).send({ message: result });
 }
 
 async function acceptWorker(req, res){
     const offerID = req.body.offerID
+    const workerID = req.body.workerID;
+    const title = req.body.title;
+    const userID = req.body.userID;
     const result = await db.offers.acceptWorker(offerID);
+    if(result == true){
+        const userContact = await db.users.getUserContactInfo(userID)
+        const workerContact = await db.users.getUserContactInfo(workerID);
+        let text = "Użytkownik " + userContact.firstName + " " + userContact.lastName.charAt(0) + ". zatwierdził twoje zgłoszenie do oferty <b>\"" + title +"\"</b>."
+        sendEmail(workerContact.email, title, text)
+    }
     res.status(200).send({ message: result });
 }
 
 async function rejectWorker(req, res){
     const offerID = req.body.offerID
-    const workerID = req.body.workerID
+    const workerID = req.body.workerID;
+    const title = req.body.title;
+    const userID = req.body.userID;
     const result = await db.offers.rejectWorker(offerID, workerID);
+    if(result == true){
+        const userContact = await db.users.getUserContactInfo(userID)
+        const workerContact = await db.users.getUserContactInfo(workerID);
+        let text = "Użytkownik " + userContact.firstName + " " + userContact.lastName.charAt(0) + ". odrzucił twoje zgłoszenie do oferty <b>\"" + title +"\"</b>."
+        sendEmail(workerContact.email, title, text)
+    }
     res.status(200).send({ message: result });
 }
 

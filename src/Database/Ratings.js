@@ -9,11 +9,11 @@ async function insertRate(rating) {
         var result;
         const collection = common.db.collection(collectionName);
         result = await collection.doc().set(rating);
-        return result;
+        return true;
 
     } catch (error) {
         console.log(error)
-        return error
+        return false
     }
 }
 

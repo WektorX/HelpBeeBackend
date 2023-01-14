@@ -1,5 +1,6 @@
 import {db} from '../Database/DB.js';
 import fs from 'firebase-admin';
+import sendEmail from '../Email/Email.js';
 
 const Firestore = fs.firestore;
 
@@ -61,6 +62,12 @@ async function setPermissions(req, res){
     const userType = req.body.userType;
     const blocked = req.body.blocked
     const result = await db.users.setPermissions(uid, userType, blocked)
+    if(result == true){
+        const userContact = await db.users.getUserContactInfo(uid);
+        let text = "Twoje konto zostało " + (blocked ? 'zablokowane' : 'odblokowane')+ ". W razie pytań proszę skontakuj się z nami odpowiadając na ten email."
+        let subject = blocked ? 'Blokada konta' : 'Konto odblokowane'
+        sendEmail(userContact.email, subject, text)
+    }
     res.status(200).send({message: result})
 }
 
@@ -86,7 +93,7 @@ async function getAllUsers(req, res) {
 async function blockUser(req, res){
     const uid = req.body.uid;
     const block = req.body.block;
-    const result = await db.users.blockUser(uid, block)
+    const result = await db.users.blockUser(uid, block);
     res.status(200).send({message: result})
 }
 

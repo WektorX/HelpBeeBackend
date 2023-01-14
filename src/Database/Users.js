@@ -9,7 +9,7 @@ async function checkIfBlocked(uid){
         const collection = common.db.collection(collectionName);
         const query = await collection.doc(uid).get();
         var response = false;
-        if(query.data() != undefined && query.data().blocked === false)
+        if(query.data() != undefined && query.data().blocked === true)
             response = true
         return response;
     }
@@ -104,7 +104,7 @@ async function blockUser(uid, block){
         var result;
         const collection = common.db.collection(collectionName);
         result = await collection.doc(uid).update(update);
-        return result;
+        return true;
 
     } catch (error) {
         console.log(error)
@@ -122,11 +122,11 @@ async function setPermissions(uid, userType, blocked){
         var result;
         const collection = common.db.collection(collectionName);
         result = await collection.doc(uid).update(update);
-        return result;
+        return true;
 
     } catch (error) {
         console.log(error)
-        return error
+        return false
     } 
 }
 
