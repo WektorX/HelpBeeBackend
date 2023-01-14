@@ -23,18 +23,35 @@ async function getComments(uid) {
         const collection = common.db.collection(collectionName);
         const query = await collection.where("workerID", "==", uid)
         .where("comment", "!=", "")
+        .where("who", "==", "employer")
         .get()
         .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 let comment = {};
                 comment.comment = doc.data().comment;
-                comment.employerID = doc.data().employerID;
+                comment.person = doc.data().employerID;
+                comment.who = doc.data().who;
                 response.push(comment)
             })
         })
 
+        const query2 = await collection.where("employerID", "==", uid)
+        .where("comment", "!=", "")
+        .where("who", "==", "worker")
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                let comment = {};
+                comment.comment = doc.data().comment;
+                comment.person = doc.data().workerID;
+                comment.who = doc.data().who;
+                response.push(comment)
+            })
+        })
+
+
         for (let i = 0; i < response.length; i++) {
-            const employerInfo = await Users.getUserContactInfo(response[i].employerID);
+            const employerInfo = await Users.getUserContactInfo(response[i].person);
             response[i].employerFirstName = employerInfo.firstName;
             response[i].employerLastName = employerInfo.lastName;
         }
@@ -46,11 +63,12 @@ async function getComments(uid) {
 }
 
 
-async function getRatingInfo(id) {
+async function getRatingInfo(id, who) {
     try {
         let rating = -1;
         const collection = common.db.collection(collectionName);
         const query = await collection.where("offerID", "==", id)
+        .where("who", "==", who)
         .get()
         .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -71,6 +89,7 @@ async function getRatings(uid) {
         let numberOfRatings = 0;
         const collection = common.db.collection(collectionName);
         const query = await collection.where("workerID", "==", uid)
+        .where("who", "==", "employer")
         .get()
         .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -78,6 +97,17 @@ async function getRatings(uid) {
                 numberOfRatings += 1;
             })
         })
+
+        const query2 = await collection.where("employerID", "==", uid)
+        .where("who", "==", "worker")
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                sum += doc.data().rating;
+                numberOfRatings += 1;
+            })
+        })
+
         let rating = 0;
         if(numberOfRatings > 0)
         rating = (sum / numberOfRatings).toFixed(2);

@@ -6,18 +6,28 @@ import sendEmail from '../Email/Email.js';
 async function insertRate(req, res){
     const rating = req.body.rating;
     let workerID = rating.workerID;
-    let userID = rating.employerID;
+    let employerID = rating.employerID;
     let rate = rating.rating;
     let comment = rating.comment;
+    let who = rating.who;
     const result = await db.ratings.insertRate(rating);
     if(result == true){
-        const userContact = await db.users.getUserContactInfo(userID)
+        const employerContact = await db.users.getUserContactInfo(employerID)
         const workerContact = await db.users.getUserContactInfo(workerID);
-        let text = "Użytkownik " + userContact.firstName + " " + userContact.lastName.charAt(0) + ". wystawił ci ocenę " + rate.toFixed(1) +".";
+        let text = '';
+        if(who == 'employer')
+        {
+            text = "Użytkownik " + employerContact.firstName + " " + employerContact.lastName.charAt(0) + ". wystawił ci ocenę " + rate.toFixed(1) +".";
+        }
+        else{
+            text = "Użytkownik " + workerContact.firstName + " " + workerContact.lastName.charAt(0) + ". wystawił ci ocenę " + rate.toFixed(1) +".";
+        }
         if(comment != ''){
             text += 'Dodał także komentarz \"' + comment + "\".";
         } 
-        sendEmail(workerContact.email, "Nowa ocena", text)
+        let email = (who == 'employer' ? workerContact.email : employerContact.email);
+        console.log(who, email)
+        sendEmail(email, "Nowa ocena", text)
     }
     res.status(200).send({message: result})
 }

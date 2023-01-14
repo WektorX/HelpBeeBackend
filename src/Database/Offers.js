@@ -29,7 +29,7 @@ async function getUserOffers(uid) {
                 response[i].workerLastName = workerInfo.lastName;
                 response[i].workerPhone = workerInfo.phoneNumber;
                 if (response[i].status == 3) {
-                    const rating = await Ratings.getRatingInfo(response[i].id);
+                    const rating = await Ratings.getRatingInfo(response[i].id, "employer");
                     response[i].rating = rating;
                 }
             }
@@ -63,6 +63,10 @@ async function getUserJobs(uid) {
             response[i].employerFirstName = employerInfo.firstName;
             response[i].employerLastName = employerInfo.lastName;
             response[i].employerPhone = employerInfo.phoneNumber;
+            if (response[i].status == 3) {
+                const rating = await Ratings.getRatingInfo(response[i].id, "worker");
+                response[i].rating = rating;
+            }
         }
         return response;
     }

@@ -27,8 +27,8 @@ async function fillInUserData(req, res){
     const id = req.body.uid;
     const user = {
         birthDate: new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0],1,0,0),
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
+        firstName: req.body.firstName.trim(),
+        lastName: req.body.lastName.trim(),
         phoneNumber: req.body.phoneNumber,
         addressID: "",
         description: "",
