@@ -64,7 +64,9 @@ async function insertOffer(req, res) {
         reportedBy : [],
         status: 0,
         blocked: false,
-        reviewed: false
+        reviewed: false,
+        type: reqObj.type,
+        inReturn:  reqObj.inReturn
     };
     const result = await db.offers.insertOffer(offer)
     res.status(200).send({ message: result })
@@ -135,9 +137,11 @@ async function updateOffer(req, res) {
         category: reqOffer.category,
         status: reqOffer.status,
         reward: reqOffer.reward,
+        type: reqOffer.type,
+        inReturn: reqOffer.inReturn
     };
     const result = await db.offers.updateOffer(docID, offer);
-    if(result == true){
+    if(result == true && workerID != ''){
         const userContact = await db.users.getUserContactInfo(userID)
         const workerContact = await db.users.getUserContactInfo(workerID);
         let text = "Użytkownik " + userContact.firstName + " " + userContact.lastName.charAt(0) + ". zaktualizował dane ofertę <b>\"" + reqOffer.title.trim() +"\"</b>, którą obserwujesz."
@@ -262,6 +266,7 @@ async function setReviewedOffer(req, res) {
     res.status(200).send(result)
 }
 
+
 export const Offers = {
     getUserOffers: getUserOffers,
     getOffersByCategory: getOffersByCategory,
@@ -282,5 +287,5 @@ export const Offers = {
     restoreOffer: restoreOffer,
     setBlockOffer: setBlockOffer,
     setReviewedOffer: setReviewedOffer,
-    getNewOffers : getNewOffers
+    getNewOffers : getNewOffers,
 }

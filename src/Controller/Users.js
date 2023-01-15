@@ -53,7 +53,8 @@ async function checkIfUserFilledBasicData(req, res){
 async function setUserLocation(req, res){
     var location = new Firestore.GeoPoint(req.body.location.Latitude, req.body.location.Longitude);
     const id = req.body.uid;
-    const result = await db.users.setUserLocation(id, location)
+    const distance = req.body.distance;
+    const result = await db.users.setUserLocation(id, location, distance)
     res.status(200).send({message: result})
 }
 

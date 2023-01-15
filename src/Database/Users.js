@@ -65,11 +65,15 @@ async function fillInUserData(id, user) {
     }
 }
 
-async function setUserLocation(id, location){
+async function setUserLocation(id, location, distance){
     try {
         var result;
+        var update ={
+            location: location,
+            distance: distance
+        }
         const collection = common.db.collection(collectionName);
-        result = await collection.doc(id).update({"location" : location});
+        result = await collection.doc(id).update(update);
         return result;
 
     } catch (error) {

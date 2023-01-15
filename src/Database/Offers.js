@@ -456,6 +456,7 @@ async function getAllOffers() {
     }
 }
 
+
 export const Offers = {
     getUserOffers: getUserOffers,
     getOffersByCategory: getOffersByCategory,
@@ -476,5 +477,5 @@ export const Offers = {
     restoreOffer: restoreOffer,
     setBlockOffer: setBlockOffer,
     setReviewedOffer :setReviewedOffer,
-    getNewOffers :getNewOffers
+    getNewOffers :getNewOffers,
 }
