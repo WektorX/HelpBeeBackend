@@ -15,6 +15,7 @@ Routes.listenAuth(app);
 Routes.listenUsers(app);
 Routes.listenOffers(app);
 Routes.listenRatings(app);
+Routes.listenChat(app);
 
 app.listen(port, () => {
     console.log(`app listening at http://localhost:${port}`)
