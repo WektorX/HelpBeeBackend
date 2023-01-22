@@ -42,8 +42,6 @@ async function sendMsg(employerID, workerID, offerID, msg) {
     try {
         var result;
         var id = '';
-        console.log("database")
-        console.log(offerID, workerID, employerID, msg)
 
         const collection = common.db.collection(collectionName);
         const query = await collection.where("employerID", "==", employerID)

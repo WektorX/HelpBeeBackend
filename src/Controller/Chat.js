@@ -15,7 +15,6 @@ async function sendMsg(req, res){
     let workerID = req.body.workerID;
     let employerID = req.body.employerID;
     let msg = req.body.msg;
-    console.log(offerID, workerID, employerID, msg)
     const result = await db.chat.sendMsg(employerID, workerID, offerID, msg);
     res.status(200).send({message: result})
 }
@@ -24,7 +23,6 @@ async function getMessages(req, res){
     const employerID = req.query.employerID;
     const workerID = req.query.workerID;
     const offerID = req.query.offerID;
-    console.log(employerID, workerID, offerID)
     const chat = await db.chat.getMessages(employerID, workerID, offerID);
     res.status(200).send(chat)
 
