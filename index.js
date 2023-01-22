@@ -7,7 +7,6 @@ const port = 3000
 
 app.use(bodyParser.json(), cors())
 
-Routes.listenAuth(app);
 Routes.listenUsers(app);
 Routes.listenOffers(app);
 Routes.listenRatings(app);
