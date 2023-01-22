@@ -18,7 +18,6 @@ export default function  sendEmail(to, subject, text){
         to: to,
         subject: subject,
         html: template.template.replace("[TEXT]", text)
-        // html: text
       };
 
 
